@@ -1,8 +1,56 @@
 // Elements & State
 let globalWeatherData = null;
 let currentDayIndex = 0;
+let globalTimezone = 'auto'; // Store location's timezone
 
 const heroTemp = document.getElementById('hero-temp');
+// ... (rest elements)
+
+// ...
+
+// Initial Load
+window.addEventListener('load', () => {
+    // Set date immediately
+    updateClockAndDate();
+
+    // Start Real-time Clock
+    setInterval(updateClockAndDate, 1000);
+
+    // Auto locate
+    getUserLocation();
+});
+
+function updateClockAndDate() {
+    const now = new Date();
+
+    // Time & Date Options
+    const timeOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZoneName: 'short' // Shows timezone offset/name e.g. GMT+9
+    };
+    const dateOptions = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+    };
+
+    // Use specific timezone if we have one and it is valid
+    if (globalTimezone && globalTimezone !== 'auto') {
+        try {
+            // Validate timezone
+            Intl.DateTimeFormat(undefined, { timeZone: globalTimezone });
+            timeOptions.timeZone = globalTimezone;
+            dateOptions.timeZone = globalTimezone;
+        } catch (e) {
+            console.warn('Invalid Timezone:', globalTimezone);
+        }
+    }
+
+    currentTimeEl.textContent = now.toLocaleTimeString('en-US', timeOptions);
+    currentDateEl.textContent = now.toLocaleDateString('en-US', dateOptions);
+}
 const heroCondition = document.getElementById('hero-condition');
 const heroWind = document.getElementById('hero-wind');
 const heroHumidity = document.getElementById('hero-humidity');
@@ -34,31 +82,7 @@ cityInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSearch();
 });
 
-// Initial Load
-window.addEventListener('load', () => {
-    // Set date immediately
-    const now = new Date();
-    currentDateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
 
-    // Start Real-time Clock
-    startClock();
-
-    // Auto locate
-    getUserLocation();
-});
-
-function startClock() {
-    const update = () => {
-        const now = new Date();
-        currentTimeEl.textContent = now.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false // Or true if prefer AM/PM
-        });
-    };
-    update(); // Initial run
-    setInterval(update, 1000);
-}
 
 function openSearch() {
     searchOverlay.classList.add('active');
@@ -155,6 +179,11 @@ function updateDashboard(data, location) {
     // 0. Background Update based on Local Time
     // Open-Meteo returns 'time' in ISO8601, e.g. "2023-10-27T14:00"
     // We can parse the hour from this string directly since timezone=auto is set.
+
+    // CAPTURE TIMEZONE
+    globalTimezone = data.timezone;
+    updateClockAndDate(); // Force update immediately
+
     try {
         const localTimeISO = current.time; // "YYYY-MM-DDTHH:MM"
         const hour = parseInt(localTimeISO.split('T')[1].split(':')[0], 10);
