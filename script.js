@@ -361,7 +361,7 @@ function renderGraph(hourly, startFromNow = true, targetDate = null) {
         // Touch Events (Mobile)
         hitArea.addEventListener('touchstart', (e) => {
             showTooltip(e);
-            setTimeout(hideTooltip, 3000);
+            setTimeout(hideTooltip, 100);
         }, { passive: true });
 
         group.appendChild(circle);
