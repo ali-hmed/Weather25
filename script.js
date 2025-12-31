@@ -1,139 +1,63 @@
 // Elements & State
 let globalWeatherData = null;
 let currentDayIndex = 0;
+let globalTimezone = 'auto'; // Default to user's local time until search
 
-const heroTemp = document.getElementById('hero-temp');
-const heroCondition = document.getElementById('hero-condition');
-const heroWind = document.getElementById('hero-wind');
-const heroHumidity = document.getElementById('hero-humidity');
-const heroRain = document.getElementById('hero-rain');
-const heroImage = document.getElementById('hero-image');
-const locationText = document.getElementById('location-text');
-const currentDateEl = document.getElementById('current-date');
-const weeklyList = document.getElementById('weekly-list');
+// ... (Rest of elements remain same)
 
-// Search & Modal Elements
-const searchTriggerBtn = document.getElementById('search-trigger-btn');
-const searchOverlay = document.getElementById('search-overlay');
-const closeSearchBtn = document.getElementById('close-search');
-const searchBtn = document.getElementById('search-btn');
-const cityInput = document.getElementById('city-input');
-const locationBtn = document.getElementById('location-btn');
-const errorMsg = document.getElementById('error-message');
-
-// Dropdown/Location Click also triggers search
-document.querySelector('.location-container').addEventListener('click', openSearch);
-
-// Event Listeners
-searchTriggerBtn.addEventListener('click', openSearch);
-closeSearchBtn.addEventListener('click', closeSearch);
-searchBtn.addEventListener('click', handleSearch);
-locationBtn.addEventListener('click', getUserLocation);
-cityInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleSearch();
-});
+// ...
 
 // Initial Load
 window.addEventListener('load', () => {
-    // Set date immediately
-    const now = new Date();
-    currentDateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' });
+    // Set date immediately (will update with location timezone shortly)
+    updateClockAndDate();
+
+    // Start Real-time Clock
+    setInterval(updateClockAndDate, 1000);
 
     // Auto locate
     getUserLocation();
 });
 
-function openSearch() {
-    searchOverlay.classList.add('active');
-    cityInput.focus();
-}
+function updateClockAndDate() {
+    const now = new Date();
 
-function closeSearch() {
-    searchOverlay.classList.remove('active');
-    errorMsg.textContent = '';
-}
+    // Time Options
+    const timeOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    };
 
-// Data Fetching
-async function handleSearch() {
-    const city = cityInput.value.trim();
-    if (!city) return;
+    // Date Options
+    const dateOptions = {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+    };
 
-    try {
-        const geoData = await getCoordinates(city);
-        if (!geoData) {
-            errorMsg.textContent = 'City not found.';
-            return;
-        }
-
-        await fetchAndRenderWeather(geoData.latitude, geoData.longitude, {
-            name: geoData.name,
-            country: geoData.country
-        });
-
-        closeSearch();
-        cityInput.value = '';
-    } catch (e) {
-        console.error(e);
-        errorMsg.textContent = 'Error fetching data.';
+    if (globalTimezone && globalTimezone !== 'auto') {
+        timeOptions.timeZone = globalTimezone;
+        dateOptions.timeZone = globalTimezone;
     }
+
+    currentTimeEl.textContent = now.toLocaleTimeString('en-US', timeOptions);
+    currentDateEl.textContent = now.toLocaleDateString('en-US', dateOptions);
 }
 
-async function getUserLocation() {
-    if (!navigator.geolocation) return;
+// ...
 
-    navigator.geolocation.getCurrentPosition(
-        async (position) => {
-            const { latitude, longitude } = position.coords;
-            try {
-                const locationName = await getCityName(latitude, longitude);
-                const locObj = {
-                    name: locationName.city || locationName.locality || "Current Location",
-                    country: locationName.countryName || ""
-                };
-                await fetchAndRenderWeather(latitude, longitude, locObj);
-                closeSearch(); // if open
-            } catch (e) {
-                console.error(e);
-            }
-        },
-        (err) => {
-            console.warn(err);
-            // Fallback to a default city if location fails on load? Or just wait.
-            // Let's fallback to "New York" as a demo if initial load fails
-            fetchAndRenderWeather(40.71, -74.01, { name: "New York", country: "USA" });
-        }
-    );
-}
-
-// API Helpers
-async function getCoordinates(city) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.results ? data.results[0] : null;
-}
-
-async function getCityName(lat, lon) {
-    const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-    const res = await fetch(url);
-    return await res.json();
-}
-
-async function fetchAndRenderWeather(lat, lon, locationInfo) {
-    // We need current, hourly (24h) and daily (7 days)
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,is_day,precipitation,rain,showers,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=7`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    globalWeatherData = data;
-    updateDashboard(data, locationInfo);
-}
-
-// Rendering
-// Rendering
 function updateDashboard(data, location) {
     const current = data.current;
+
+    // Store Timezone from API (e.g. "Africa/Mogadishu")
+    globalTimezone = data.timezone;
+
+    // Force immediate update so we don't wait 1s
+    updateClockAndDate();
+
+    // 0. Background Update based on Local Time
+    // ...
 
     // 0. Background Update based on Local Time
     // Open-Meteo returns 'time' in ISO8601, e.g. "2023-10-27T14:00"
