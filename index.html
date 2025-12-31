@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherCloud | Pro Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="star-container"></div>
+    <div class="app-wrapper">
+        <main class="dashboard-card">
+
+            <!-- Left & Center: Main Weather Info -->
+            <section class="main-panel">
+                <header class="top-bar">
+                    <div class="location-container">
+                        <i class="ri-map-pin-line"></i>
+                        <span id="location-text">Locating...</span>
+                        <i class="ri-arrow-down-s-line dropdown-icon"></i>
+                    </div>
+                    <div class="date-container" id="current-date">--</div>
+
+                    <!-- Search Overlay Trigger -->
+                    <button id="search-trigger-btn" class="icon-btn">
+                        <i class="ri-search-line"></i>
+                    </button>
+                </header>
+
+                <div class="weather-hero">
+                    <div class="hero-left">
+                        <div class="big-temp">
+                            <span id="hero-temp">--</span><span class="degree">°</span>
+                        </div>
+                        <div class="hero-condition" id="hero-condition">--</div>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <i class="ri-windy-line"></i>
+                                <span id="hero-wind">--</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="ri-drop-line"></i>
+                                <span id="hero-humidity">--</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="ri-umbrella-line"></i>
+                                <span id="hero-rain">-- mm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-center-viz">
+                        <!-- We will inject a dynamic 3D-style image here via JS -->
+                        <img id="hero-image"
+                            src="https://raw.githubusercontent.com/basmilius/weather-icons/dev/design/fill/final/partly-cloudy-day.svg"
+                            alt="Weather Icon">
+                    </div>
+                </div>
+
+                <div class="forecast-graph-container">
+                    <h3>Temperature</h3>
+                    <div class="graph-wrapper" id="graph-wrapper">
+                        <!-- Custom Tooltip -->
+                        <div id="graph-tooltip" class="graph-tooltip"></div>
+
+                        <!-- SVG Graph will be injected here -->
+                        <svg id="temp-graph" viewBox="0 0 500 100" preserveAspectRatio="none">
+                            <!-- Path will be dynamic -->
+                        </svg>
+                        <div class="graph-labels" id="graph-labels">
+                            <!-- Time labels -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right: Weekly Forecast Sidebar -->
+            <aside class="sidebar-panel">
+                <h3>7-Day Forecast</h3>
+                <div class="weekly-list" id="weekly-list">
+                    <!-- Javascript will populate this -->
+                    <div class="loading-sidebar">Loading...</div>
+                </div>
+            </aside>
+
+        </main>
+
+        <!-- Search Modal Overlay -->
+        <div class="search-overlay" id="search-overlay">
+            <div class="search-modal">
+                <button class="close-search" id="close-search"><i class="ri-close-line"></i></button>
+                <h2>Find City</h2>
+                <div class="search-input-group">
+                    <input type="text" id="city-input" placeholder="Enter city name..." autocomplete="off">
+                    <button id="search-btn">Search</button>
+                </div>
+                <button id="location-btn" class="use-location-btn">
+                    <i class="ri-gps-line"></i> Use Current Location
+                </button>
+                <div id="error-message" class="error-msg"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
