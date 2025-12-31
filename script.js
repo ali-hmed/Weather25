@@ -305,6 +305,7 @@ function renderGraph(hourly, startFromNow = true, targetDate = null) {
 
     // Reset SVG
     svg.innerHTML = '';
+    
 
     // Mist Animation Gradient
     const mistId = 'mist-' + Date.now();
