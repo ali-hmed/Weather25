@@ -30,6 +30,7 @@ body {
 }
 
 /* Dynamic Background Layer */
+/* Now serves as the gradient overlay on top of the video */
 body::before {
     content: '';
     position: fixed;
@@ -37,25 +38,36 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -2;
-    background-size: cover;
-    background-position: center;
-    transition: background-image 1s ease-in-out;
-    animation: kenBurns 40s infinite alternate ease-in-out;
+    z-index: -4;
+    /* Above video, below stars? No, stars are -1. Video is -5. */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+    /* Generic overlay */
+    transition: background 1s ease-in-out;
 }
 
-/* Time of Day Backgrounds */
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -5;
+    transition: opacity 1s ease-in-out;
+}
+
+/* Time of Day Overlays (Optional tweaks to the gradient) */
 body.bg-morning::before {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=1920&auto=format&fit=crop');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
 }
 
 body.bg-day::before {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('https://images.unsplash.com/photo-1604228741406-3faa38f4907a?q=80&w=1920&auto=format&fit=crop');
+    background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
 }
 
 /* Night Background with Stars Overlay */
 body.bg-night::before {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1505322022379-7c3353ee6291?q=80&w=1920&auto=format&fit=crop');
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
 }
 
 /* Star Container - Only visible at night */
@@ -80,8 +92,8 @@ body.bg-night #star-container {
 #star-container::before {
     content: ' ';
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: 2px;
+    height: 2px;
     background: transparent;
     box-shadow:
         100px 200px #FFF, 320px 400px #FFF, 500px 100px #FFF, 800px 600px #FFF,
@@ -137,8 +149,8 @@ body.bg-night #star-container {
     height: 100%;
     background-color: var(--card-bg);
     /* Glass */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: var(--radius-l);
     box-shadow: var(--shadow-soft);
     display: flex;

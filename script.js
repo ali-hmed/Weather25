@@ -185,21 +185,44 @@ function updateDashboard(data, location) {
     renderWeekly(data.daily);
 }
 
+const bgVideo = document.getElementById('bg-video');
+
 function updateBackground(hour, code) {
     const body = document.body;
-    body.className = ''; // Reset
+    body.className = ''; // Reset class for gradients/stars logic
 
-    // Helper to determine phase
-    // Morning: 5 - 11
-    // Day: 11 - 17
-    // Evening/Night: 17 - 5
+    let videoSrc = '';
+    let modeClass = '';
+
+    // Video Sources (Reliable Direct Links)
+    const videos = {
+        // Sunrise/Morning - Coverr
+        morning: 'bg-vid2.mp4',
+        // Day/Clouds - Public Domain (Wikimedia)
+        day: 'bg-vid3.mp4',
+        // Night/Stars - Coverr
+        night: 'bg-vid1.mp4'
+    };
 
     if (hour >= 5 && hour < 11) {
-        body.classList.add('bg-morning');
+        modeClass = 'bg-morning';
+        videoSrc = videos.morning;
     } else if (hour >= 11 && hour < 18) {
-        body.classList.add('bg-day');
+        modeClass = 'bg-day';
+        videoSrc = videos.day;
     } else {
-        body.classList.add('bg-night');
+        modeClass = 'bg-night';
+        videoSrc = videos.night;
+    }
+
+    body.classList.add(modeClass);
+
+    // Only update if source changes to prevent flickering/reloading
+    // We check if the current src contains the target filename to allow for base URL diffs
+    if (!bgVideo.src.includes(videoSrc)) {
+        bgVideo.src = videoSrc;
+        bgVideo.load();
+        bgVideo.play().catch(e => console.log("Autoplay blocked/failed", e));
     }
 }
 
