@@ -306,11 +306,28 @@ function renderGraph(hourly, startFromNow = true, targetDate = null) {
     // Reset SVG
     svg.innerHTML = '';
 
+    // Mist Animation Gradient
+    const mistId = 'mist-' + Date.now();
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    defs.innerHTML = `
+        <linearGradient id="${mistId}" x1="0%" y1="0%" x2="200%" y2="0%">
+            <stop offset="0%" stop-color="rgba(255, 255, 255, 0.08)" />
+            <stop offset="25%" stop-color="rgba(255, 255, 255, 0.1)" />
+            <stop offset="50%" stop-color="rgba(255, 255, 255, 0.0)" />
+            <stop offset="75%" stop-color="rgba(255, 255, 255, 0.16)" />
+            <stop offset="100%" stop-color="rgba(255, 255, 255, 0.03)" />
+            <animate attributeName="x1" from="0%" to="-100%" dur="20s" repeatCount="indefinite" />
+            <animate attributeName="x2" from="200%" to="100%" dur="20s" repeatCount="indefinite" />
+        </linearGradient>
+    `;
+    svg.appendChild(defs);
+
     // Area Path
     const dArea = `${d} L ${width},${height} L 0,${height} Z`;
     const pathArea = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     pathArea.setAttribute('d', dArea);
     pathArea.setAttribute('class', 'graph-area');
+    pathArea.style.fill = `url(#${mistId})`;
     svg.appendChild(pathArea);
 
     // Line Path
