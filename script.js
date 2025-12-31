@@ -197,11 +197,11 @@ function updateBackground(hour, code) {
     // Video Sources (Reliable Direct Links)
     const videos = {
         // Sunrise/Morning - Coverr
-        morning: 'bg-vid2.mp4',
+        morning: 'bg-morning.mp4',
         // Day/Clouds - Public Domain (Wikimedia)
-        day: 'bg-vid3.mp4',
+        day: 'bg-day.mp4',
         // Night/Stars - Coverr
-        night: 'bg-vid1.mp4'
+        night: 'bg-night.mp4'
     };
 
     if (hour >= 5 && hour < 11) {
