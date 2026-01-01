@@ -13,8 +13,9 @@ window.addEventListener('load', () => {
     // Set date immediately
     updateClockAndDate();
 
-    // Start Real-time Clock
-    setInterval(updateClockAndDate, 1000);
+    // Start Real-time Clock we dont need this one 
+    
+    // setInterval(updateClockAndDate, 1000);
 
     // Auto locate
     getUserLocation();
