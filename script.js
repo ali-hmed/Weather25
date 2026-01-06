@@ -239,7 +239,7 @@ function updateBackground(hour, code) {
     } else if (hour >= 11 && hour < 16) {
         modeClass = 'bg-day';
         videoSrc = videos.day;
-    } else if (hour >= 16 && hour < 19) {
+    } else if (hour >= 16 && hour < 18) {
         modeClass = 'bg-afternoon';
         videoSrc = videos.afternoon;
     } else {
