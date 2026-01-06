@@ -61,8 +61,18 @@ body.bg-morning::before {
     background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
 }
 
+body.bg-afternoon {
+    --accent: #FF7F50;
+    /* Coral / Sunset Orange */
+}
+
 body.bg-day::before {
     background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+}
+
+/* Afternoon / Golden Hour */
+body.bg-afternoon::before {
+    background: linear-gradient(to bottom, rgba(255, 140, 0, 0.15), rgba(0, 0, 0, 0.35));
 }
 
 /* Night Background with Stars Overlay */
@@ -85,6 +95,40 @@ body.bg-night::before {
 
 body.bg-night #star-container {
     opacity: 1;
+}
+
+/* Afternoon Glow / Sun Pulse */
+#afternoon-glow {
+    position: fixed;
+    top: 30%;
+    right: -10%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.25) 0%, rgba(255, 140, 0, 0) 70%);
+    z-index: -3;
+    pointer-events: none;
+    opacity: 0;
+    filter: blur(40px);
+    transition: opacity 2s ease;
+    animation: pulseGlow 8s ease-in-out infinite;
+}
+
+body.bg-afternoon #afternoon-glow {
+    opacity: 1;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
 }
 
 /* Helper to generate stars via box-shadow */
@@ -278,6 +322,11 @@ body.bg-night #star-container {
     color: #ffffff;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     /* Pop from background */
+    transition: text-shadow 1s ease;
+}
+
+body.bg-afternoon .big-temp {
+    text-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
 }
 
 .big-temp .degree {

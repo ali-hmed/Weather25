@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
     updateClockAndDate();
 
     // Start Real-time Clock we dont need this one 
-    
+
     // setInterval(updateClockAndDate, 1000);
 
     // Auto locate
@@ -224,22 +224,24 @@ function updateBackground(hour, code) {
     let videoSrc = '';
     let modeClass = '';
 
-    // Video Sources (Reliable Direct Links)
+    // Video Sources
     const videos = {
-        // Sunrise/Morning - Coverr
-        morning: 'bg-morning.mp4',
-        // Day/Clouds - Public Domain (Wikimedia)
-        day: 'bg-day.mp4',
-        // Night/Stars - Coverr
-        night: 'bg-night.mp4'
+        morning: './Videos/bg-morning.mp4',
+        day: './Videos/bg-day.mp4',
+        afternoon: './Videos/bg-afternoon.mp4', // Expected local file
+        night: './Videos/bg-night.mp4'
     };
+
 
     if (hour >= 5 && hour < 11) {
         modeClass = 'bg-morning';
         videoSrc = videos.morning;
-    } else if (hour >= 11 && hour < 18) {
+    } else if (hour >= 11 && hour < 16) {
         modeClass = 'bg-day';
         videoSrc = videos.day;
+    } else if (hour >= 16 && hour < 19) {
+        modeClass = 'bg-afternoon';
+        videoSrc = videos.afternoon;
     } else {
         modeClass = 'bg-night';
         videoSrc = videos.night;
@@ -247,12 +249,33 @@ function updateBackground(hour, code) {
 
     body.classList.add(modeClass);
 
-    // Only update if source changes to prevent flickering/reloading
-    // We check if the current src contains the target filename to allow for base URL diffs
+    // Only update if source changes to prevent flickering
     if (!bgVideo.src.includes(videoSrc)) {
-        bgVideo.src = videoSrc;
-        bgVideo.load();
-        bgVideo.play().catch(e => console.log("Autoplay blocked/failed", e));
+        // Use local video if it exists, otherwise use fallback for afternoon
+        const activeSrc = videoSrc;
+
+        // Cool transition: fade out, swap, fade in
+        bgVideo.style.opacity = 0;
+
+        setTimeout(() => {
+            bgVideo.src = activeSrc;
+            bgVideo.load();
+            bgVideo.play()
+                .then(() => {
+                    bgVideo.style.opacity = 1;
+                })
+                .catch(e => {
+                    console.log("Autoplay blocked or failed", e);
+                    // If error occurs and it's afternoon, try the web fallback
+                    if (modeClass === 'bg-afternoon') {
+                        bgVideo.src = fallbacks.afternoon;
+                        bgVideo.load();
+                        bgVideo.play().then(() => bgVideo.style.opacity = 1);
+                    } else {
+                        bgVideo.style.opacity = 1;
+                    }
+                });
+        }, 1000);
     }
 }
 
@@ -306,7 +329,7 @@ function renderGraph(hourly, startFromNow = true, targetDate = null) {
 
     // Reset SVG
     svg.innerHTML = '';
-    
+
 
     // Mist Animation Gradient
     const mistId = 'mist-' + Date.now();
