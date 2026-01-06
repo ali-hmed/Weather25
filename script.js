@@ -228,7 +228,7 @@ function updateBackground(hour, code) {
     const videos = {
         morning: './Videos/bg-morning.mp4',
         day: './Videos/bg-day.mp4',
-        afternoon: './Videos/bg-afternoon.mp4', // Expected local file
+        afternoon: './Videos/bg-afternoon1.mp4', // Expected local file
         night: './Videos/bg-night.mp4'
     };
 
